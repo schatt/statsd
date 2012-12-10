@@ -34,6 +34,7 @@ Optional Variables:
     interval:       how often to log frequent keys [ms, default: 0]
     percent:        percentage of frequent keys to log [%, default: 100]
     log:            location of log file for frequent keys [default: STDOUT]
+  deleteCounters:   don't send values to graphite for inactive counters, as opposed to sending 0 [default: false]
 
   console:
     prettyprint:    whether to prettyprint the console backend
@@ -43,6 +44,14 @@ Optional Variables:
     backend:        where to log: stdout or syslog [string, default: stdout]
     application:    name of the application for syslog [string, default: statsd]
     level:          log level for [node-]syslog [string, default: LOG_INFO]
+
+  graphite:
+    legacyNamespace:  use the legacy namespace [default: true]
+    globalPrefix:     global prefix to use for sending stats to graphite [default: "stats"]
+    prefixCounter:    graphite prefix for counter metrics [default: "counters"]
+    prefixTimer:      graphite prefix for timer metrics [default: "timers"]
+    prefixGauge:      graphite prefix for gauge metrics [default: "gauges"]
+    prefixSet:        graphite prefix for set metrics [default: "sets"]
 
   repeater:         an array of hashes of the for host: and port:
                     that details other statsd servers to which the received
