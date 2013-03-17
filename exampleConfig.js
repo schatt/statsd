@@ -20,11 +20,11 @@ Optional Variables:
                     the default graphite backend will be loaded.
   debug:            debug flag [default: false]
   address:          address to listen on over UDP [default: 0.0.0.0]
+  address_ipv6:     defines if the address is an IPv4 or IPv6 address [true or false, default: false]
   port:             port to listen for messages on over UDP [default: 8125]
   mgmt_address:     address to run the management TCP interface on
                     [default: 0.0.0.0]
   mgmt_port:        port to run the management TCP interface on [default: 8126]
-  debugInterval:    interval to print debug information [ms, default: 10000]
   dumpMessages:     log all incoming messages
   flushInterval:    interval (in ms) to flush to Graphite
   percentThreshold: for time information, calculate the Nth percentile(s)
@@ -34,7 +34,15 @@ Optional Variables:
     interval:       how often to log frequent keys [ms, default: 0]
     percent:        percentage of frequent keys to log [%, default: 100]
     log:            location of log file for frequent keys [default: STDOUT]
+  deleteIdleStats:  don't send values to graphite for inactive counters, sets, gauges, or timeers
+                    as opposed to sending 0.  For gauges, this unsets the gauge (instead of sending
+                    the previous value). Can be indivdually overriden. [default: false]
+  deleteGauges  :   don't send values to graphite for inactive gauges, as opposed to sending the previous value [default: false]
+  deleteTimers:     don't send values to graphite for inactive timers, as opposed to sending 0 [default: false]
+  deleteSets:       don't send values to graphite for inactive sets, as opposed to sending 0 [default: false]
   deleteCounters:   don't send values to graphite for inactive counters, as opposed to sending 0 [default: false]
+  prefixStats:      prefix to use for the statsd statistics data for this running instance of statsd [default: statsd]
+                    applies to both legacy and new namespacing
 
   console:
     prettyprint:    whether to prettyprint the console backend
@@ -59,14 +67,28 @@ Optional Variables:
                     e.g. [ { host: '10.10.10.10', port: 8125 },
                            { host: 'observer', port: 88125 } ]
 
-  repeaterProtocol: whether to use udp4 or udp4 for repeaters.
+  repeaterProtocol: whether to use udp4 or udp6 for repeaters.
                     ["udp4" or "udp6", default: "udp4"]
+
+    histogram:      for timers, an array of mappings of strings (to match metrics) and
+                    corresponding ordered non-inclusive upper limits of bins.
+                    For all matching metrics, histograms are maintained over
+                    time by writing the frequencies for all bins.
+                    'inf' means infinity. A lower limit of 0 is assumed.
+                    default: [], meaning no histograms for any timer.
+                    First match wins.  examples:
+                    * histogram to only track render durations, with unequal
+                      class intervals and catchall for outliers:
+                      [ { metric: 'render', bins: [ 0.01, 0.1, 1, 10, 'inf'] } ]
+                    * histogram for all timers except 'foo' related,
+                      equal class interval and catchall for outliers:
+                     [ { metric: 'foo', bins: [] },
+                       { metric: '', bins: [ 50, 100, 150, 200, 'inf'] } ]
+
 */
 {
   graphitePort: 2003
-, graphiteHost: "graphite.host.com"
+, graphiteHost: "graphite.example.com"
 , port: 8125
 , backends: [ "./backends/graphite" ]
-, repeater: [ { host: "10.8.3.214", port: 8125 } ]
-, repeaterProtocol: "udp4"
 }
